@@ -4,13 +4,20 @@ from django.shortcuts import render
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
 
+# import spacy
+
+# nlp = spacy.load('en-core-web-sm')
+
 import spacy
 
+try:
+    nlp = spacy.load('en_core_web_sm')
+except OSError:
+    import subprocess
+    subprocess.run(['python', '-m', 'spacy', 'download', 'en_core_web_sm'])
+    nlp = spacy.load('en_core_web_sm')
 
 
-
-
-nlp = spacy.load('en-core-web-sm')
 
 bot = ChatBot('chatApplication', read_only=False, logic_adapters=['chatterbot.logic.BestMatch'])
 
@@ -29,16 +36,15 @@ list_train.train(list_to_train)
 
 
 def index(request):
-    #  usermessage=request.GET.get('userMessage')
-    #  print(usermessage)
-    #  return HttpResponse('usermessage')
-
+    usermessage=request.GET.get('userMessage')
+    print(usermessage)
+    return HttpResponse('usermessage')
     return render(request, "index.html")
 
 
 def getresponse(request):
     usermessage = request.GET.get('userMessage')
-    # print(usermessage)
+    print(usermessage)
     ChatResponse = str(bot.get_response(usermessage))
     return HttpResponse(ChatResponse)
 
